@@ -1,26 +1,40 @@
 import { createBrowserRouter } from "react-router";
 
 const router = createBrowserRouter([
+
     {
-        path:"/", // alamat dari sebuah page
+        path:"/",
         children : [
             {
                 index : true,
                 lazy : {
-                    Component : async() =>{
+                    Component : async () => {
+                        const component = await import("../pages/auth/signup/signup.tsx")
+
+                        return component.default
+                    }
+                }
+            }
+        ]
+    },
+    {
+        path: "/movie",
+        children: [
+            {
+                index:true,
+                lazy:{
+                    Component : async () => {
                         const component = await import("../pages/movies/Movies.tsx")
-                        return component.default 
+                        return component.default
                     }
                 }
             },
-
             {
-                path : "add-movie",
-                index : true, 
-                lazy : {
-                    Component : async() =>{
-                        const component = await import("../pages/movies/AddMovie.tsx")
-                        return component.default
+                path:"add-movie",
+                lazy:{
+                    Component : async () => {
+                        const Component = await import("../pages/movies/AddMovie.tsx")
+                        return Component.default
                     }
                 }
             }
