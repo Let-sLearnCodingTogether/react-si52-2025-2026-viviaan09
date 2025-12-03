@@ -14,7 +14,18 @@ const router = createBrowserRouter([
                         return component.default
                     }
                 }
-            }
+            },
+
+            {
+                path : "SignIn",
+                lazy : {
+                    Component : async () => {
+                        const component = await import("../pages/auth/signin/SignIn.tsx")
+                        return component.default
+                    }
+                }
+            },
+
         ]
     },
     {
