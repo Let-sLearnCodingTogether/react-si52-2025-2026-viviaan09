@@ -41,10 +41,19 @@ const router = createBrowserRouter([
                 }
             },
             {
-                path:"add-movie",
+                path:"add-movies",
                 lazy:{
                     Component : async () => {
                         const Component = await import("../pages/movies/AddMovie.tsx")
+                        return Component.default
+                    }
+                }
+            },
+            {
+                path:"edit-movie/:id",
+                lazy:{
+                    Component : async () => {
+                        const Component = await import("../pages/movies/EditMovie.tsx")
                         return Component.default
                     }
                 }

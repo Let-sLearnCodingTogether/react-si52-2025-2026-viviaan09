@@ -1,6 +1,6 @@
-import { useState, type ChangeEvent, type FormEvent } from "react"
+import { useCallback, useEffect, useState, type ChangeEvent, type FormEvent } from "react"
 import { Button, Form } from "react-bootstrap"
-import { NavLink } from "react-router"
+import { NavLink, useParams } from "react-router"
 import ApiClient from "../../utils/ApiClient"
 
 interface FormMovie{
@@ -9,12 +9,38 @@ interface FormMovie{
     sutradara : string
 }
 
-function AddMovie(){
+interface ResponseData {
+    data : {
+        _id : string,
+        judul : string,
+        sutradara : string,
+        tahunRilis : string,
+        createdBy : string,
+        createdAt : string,
+        updateAt : string,
+        _v : string
+    },
+}
+function EditMovie(){
+    const params = useParams()
     const [form, setForm]=useState({
         judul: "",
         tahunRilis : "",
         sutradara : ""
     })
+
+const fetchMovie = useCallback(async() => {
+    const response = await ApiClient.get(`/movie/${params.id}`)
+
+    if(response.status === 200){
+        const responseData : ResponseData = response.data
+        setForm({
+            judul : responseData.data.judul,
+            tahunRilis : responseData.data.tahunRilis,
+            sutradara : responseData.data.sutradara
+        })
+    }
+}, [params])    
 
 const handleInputChange = (event : ChangeEvent<HTMLInputElement>) => {
     const {name, value} = event.target
@@ -35,9 +61,14 @@ const handleSubmit = async (event : FormEvent<HTMLFormElement>) => {
     }
 }
 
+   useEffect(()=>{
+        fetchMovie()
+    }, [fetchMovie])
+
+
     return <div className="container mx-auto">
         <div className="d-flex justify-content-between mb-3">
-            <h4>Add Movie Page</h4>
+            <h4>Edit Movie Page</h4>
             <NavLink to ="/movie" className="btn btn-primary">List Movies</NavLink>
         </div>
 
@@ -82,4 +113,4 @@ const handleSubmit = async (event : FormEvent<HTMLFormElement>) => {
     </div>
 }
 
-export default AddMovie
+export default EditMovie

@@ -2,7 +2,7 @@ import { useState, type ChangeEvent, type FormEvent } from "react"
 import { Form } from "react-bootstrap"
 import {Button} from "react-bootstrap"
 import ApiClient from "../../../utils/ApiClient"
-import { NavLink } from "react-router"
+import { NavLink, useNavigate } from "react-router"
 
 interface SignInForm {
     
@@ -11,6 +11,8 @@ interface SignInForm {
 }
 
 function SignIn(){
+    const navigate = useNavigate()
+    const [isLoading, setIsLoading] = useState(false)
     const [form, setform] = useState<SignInForm>({
         email: "",
         password: "",
@@ -26,17 +28,27 @@ function SignIn(){
     }
     const onSubmit = async (event : FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-
+        setIsLoading (true)
         try{
             const response = await ApiClient.post("/signin",form)
 
-            console.log(response.data)
+            console.log(response.data);
+
+            if(response.status === 200) {
+                localStorage.setItem("AuthToken", response.data.data.token)
+                navigate("/movie",{
+                    replace:true
+                })
+            }
+
         }catch(error){
             console.log(error)
+        } finally{
+            setIsLoading(false)
         }
     }
 
-    return <div className="container mx-auto  " >Sign In Page
+    return <div className="container mx-auto  " ><h1>Sign In Page</h1>
  <Form onSubmit={onSubmit}>
            <Form.Group className="mb-3" controlId="formemail">
               <Form.Label>email</Form.Label>
@@ -54,9 +66,13 @@ function SignIn(){
                   type="password"
                   placeholder="password" />
           </Form.Group>
-          <Button type = "submit" variant = "primary">Sign In</Button>
-          <NavLink to="/signin">Sign In</NavLink>
-
+          <Button 
+          type = "submit" 
+          variant = "primary"
+          disabled={isLoading}>
+          {isLoading ? "Loading..." : "Sign In"}
+          </Button>
+          <NavLink to="/">Sign Up</NavLink>
       </Form>
     </div>
 }
